@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     api_key_header: str = "X-Ferox-API-Key"
     api_secret: str = "change-me-in-production"
     
-    # Database (/tmp is writable on Railway; override with FEROX_DATABASE_URL for local)
+    # Database (/tmp writable on Railway; FEROX_DATABASE_URL overrides for local)
     database_url: str = "sqlite+aiosqlite:////tmp/ferox.db"
     
     # Payment backends - LNbits (easy Lightning)

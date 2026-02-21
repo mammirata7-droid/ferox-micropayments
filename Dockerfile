@@ -11,10 +11,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 RUN chmod +x start.sh
 
-# Create non-root user
-RUN useradd -m appuser && chown -R appuser:appuser /app
-USER appuser
-
+# Run as root (Railway /tmp needs write access; appuser had permission issues)
 EXPOSE 8000
 
 # Python reads PORT from env (avoids shell expansion issues on Railway)
