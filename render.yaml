@@ -1,0 +1,17 @@
+# Render.com blueprint - deploy Ferox Micropayments
+services:
+  - type: web
+    name: ferox-micropayments
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: FEROX_API_SECRET
+        sync: false
+      - key: FEROX_DATABASE_URL
+        value: sqlite+aiosqlite:///./data/ferox.db
+      - key: FEROX_LNBITS_ENABLED
+        sync: false
+      - key: FEROX_LNBITS_URL
+        sync: false
+      - key: FEROX_LNBITS_API_KEY
+        sync: false
