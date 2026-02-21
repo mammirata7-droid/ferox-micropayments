@@ -1,4 +1,6 @@
 """Ferox Micropayments - API for AI agents to pay you."""
+import logging
+import os
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
@@ -7,14 +9,23 @@ from models.database import init_db, get_session_factory
 from deps import get_db, SessionLocal
 from api.routes import router
 
+logging.basicConfig(level=logging.INFO)
+log = logging.getLogger(__name__)
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Startup: init DB. Shutdown: cleanup."""
     import deps
-    settings = get_settings()
-    engine = await init_db(settings.database_url)
-    deps.SessionLocal = get_session_factory(engine)
+    log.info("Starting Ferox Micropayments (PORT=%s)", os.environ.get("PORT", "8000"))
+    try:
+        settings = get_settings()
+        engine = await init_db(settings.database_url)
+        deps.SessionLocal = get_session_factory(engine)
+        log.info("Database initialized")
+    except Exception as e:
+        log.exception("Startup failed: %s", e)
+        raise
     yield
     await engine.dispose()
 

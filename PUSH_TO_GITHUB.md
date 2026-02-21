@@ -1,23 +1,24 @@
 # Push Ferox to GitHub
 
-Run these commands in your terminal. **Replace `YOUR_GITHUB_USERNAME`** with your actual GitHub username.
+Run these commands in your terminal. **Replace** `YOUR_GITHUB_USERNAME` and the email/name if needed.
 
+### Step 1: Set your Git identity (one-time, if not done before)
+```bash
+git config --global user.email "your-email@example.com"
+git config --global user.name "Your Name"
+```
+
+### Step 2: Commit and push
 ```bash
 cd /home/mauricio/agents/playground/ferox-micropayments
 
-# Initialize git (only Ferox folder)
-git init
-
-# Add all files
-git add .
-
-# First commit
+# Commit (files already added)
 git commit -m "Initial commit: Ferox Micropayments API"
 
-# Add your GitHub repo as remote (replace YOUR_GITHUB_USERNAME!)
+# Add your GitHub repo (replace YOUR_GITHUB_USERNAME!)
 git remote add origin https://github.com/YOUR_GITHUB_USERNAME/ferox-micropayments.git
 
-# Push to GitHub
+# Push
 git branch -M main
 git push -u origin main
 ```
