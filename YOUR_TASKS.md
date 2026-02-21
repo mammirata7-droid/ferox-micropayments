@@ -32,9 +32,8 @@ Add a **Railway Volume** for persistent storage (the default in-memory DB can be
 
 1. In Railway → your service → **Variables** tab
 2. Click **+ New Variable** → **Add Volume**
-3. Create a volume, mount path: `/data`
-4. Add variable: `FEROX_DATABASE_URL` = `sqlite+aiosqlite:////data/ferox.db`
-5. Redeploy
+3. Create a volume with mount path: **`/data`**
+4. Redeploy — the app auto-detects the volume and uses it for the database
 
 ### Option B: Render
 

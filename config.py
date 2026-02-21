@@ -1,6 +1,15 @@
 """Ferox Micropayments configuration."""
+import os
 from pydantic_settings import BaseSettings
 from functools import lru_cache
+
+
+def _default_database_url() -> str:
+    """Use Railway volume if mounted, else in-memory."""
+    mount = os.environ.get("RAILWAY_VOLUME_MOUNT_PATH")
+    if mount:
+        return f"sqlite+aiosqlite:///{mount.rstrip('/')}/ferox.db"
+    return "sqlite+aiosqlite:///file::memory:?cache=shared"
 
 
 class Settings(BaseSettings):
@@ -12,8 +21,8 @@ class Settings(BaseSettings):
     api_key_header: str = "X-Ferox-API-Key"
     api_secret: str = "change-me-in-production"
     
-    # Database (in-memory on Railway - no filesystem; FEROX_DATABASE_URL for local persistence)
-    database_url: str = "sqlite+aiosqlite:///file::memory:?cache=shared"
+    # Database (Railway volume or in-memory; FEROX_DATABASE_URL overrides)
+    database_url: str = ""
     
     # Payment backends - LNbits (easy Lightning)
     lnbits_enabled: bool = False
@@ -30,4 +39,7 @@ class Settings(BaseSettings):
 
 @lru_cache
 def get_settings() -> Settings:
-    return Settings()
+    s = Settings()
+    if not s.database_url:
+        s = s.model_copy(update={"database_url": _default_database_url()})
+    return s
