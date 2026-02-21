@@ -17,6 +17,15 @@ Everything I could do is done. Here’s what **you** need to do next.
 6. Click **Generate Domain** to get a public URL like `https://ferox-xxx.railway.app`
 7. Test: open `https://your-url/docs` and try POST /v1/pay
 
+**If you see "Application failed to respond" (502):**
+
+1. Go to **Railway Dashboard** → your project → **Deployments** → click the latest deployment
+2. Click **View Logs** and look for:
+   - `Starting Ferox Micropayments (PORT=...)` – confirms the app started
+   - Any Python traceback – tells you what crashed
+3. In **Settings** → **Networking** → ensure a **public domain** is generated
+4. In **Variables**, confirm `FEROX_API_SECRET` is set (Railway sets `PORT` automatically)
+
 ### Option B: Render
 
 1. Go to **https://render.com**
