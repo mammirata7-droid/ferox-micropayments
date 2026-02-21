@@ -31,9 +31,19 @@ app.include_router(router)
 
 @app.get("/")
 async def root():
-    return {
-        "service": "Ferox Micropayments",
-        "docs": "/docs",
-        "health": "/v1/health",
-        "create_payment": "POST /v1/pay",
-    }
+    """Root - redirects to docs for browsers."""
+    from fastapi.responses import HTMLResponse
+    return HTMLResponse("""
+    <!DOCTYPE html>
+    <html>
+    <head><title>Ferox Micropayments</title></head>
+    <body style="font-family:sans-serif; padding:2rem;">
+    <h1>Ferox Micropayments</h1>
+    <p>API for AI agents to pay you in micropayments.</p>
+    <ul>
+    <li><a href="/docs">API Docs (Swagger)</a></li>
+    <li><a href="/v1/health">Health Check</a></li>
+    </ul>
+    </body>
+    </html>
+    """)
