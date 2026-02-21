@@ -17,5 +17,5 @@ USER appuser
 
 EXPOSE 8000
 
-# Use shell so Railway's PORT env var is expanded
-CMD ["/bin/sh", "-c", "exec uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+# Python reads PORT from env (avoids shell expansion issues on Railway)
+CMD ["python", "run.py"]
