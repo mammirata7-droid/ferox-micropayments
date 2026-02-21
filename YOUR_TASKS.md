@@ -26,6 +26,16 @@ Everything I could do is done. Here’s what **you** need to do next.
 3. In **Settings** → **Networking** → ensure a **public domain** is generated
 4. In **Variables**, confirm `FEROX_API_SECRET` is set (Railway sets `PORT` automatically)
 
+**If the app crashes when you visit the URL in a browser:**
+
+Add a **Railway Volume** for persistent storage (the default in-memory DB can be unstable):
+
+1. In Railway → your service → **Variables** tab
+2. Click **+ New Variable** → **Add Volume**
+3. Create a volume, mount path: `/data`
+4. Add variable: `FEROX_DATABASE_URL` = `sqlite+aiosqlite:////data/ferox.db`
+5. Redeploy
+
 ### Option B: Render
 
 1. Go to **https://render.com**

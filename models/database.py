@@ -3,6 +3,7 @@ from datetime import datetime
 from sqlalchemy import Column, Integer, String, DateTime, Text, JSON
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
+from sqlalchemy.pool import StaticPool
 
 Base = declarative_base()
 
@@ -47,7 +48,10 @@ class UsageLog(Base):
 
 async def init_db(database_url: str):
     """Create tables."""
-    engine = create_async_engine(database_url, echo=False)
+    # StaticPool for in-memory SQLite - keeps single connection, avoids DB destruction on request end
+    poolclass = StaticPool if ":memory:" in database_url or "memory" in database_url else None
+    pool_kw = {"poolclass": poolclass} if poolclass else {}
+    engine = create_async_engine(database_url, echo=False, **pool_kw)
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     return engine
