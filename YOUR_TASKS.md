@@ -26,14 +26,14 @@ Everything I could do is done. Here’s what **you** need to do next.
 3. In **Settings** → **Networking** → ensure a **public domain** is generated
 4. In **Variables**, confirm `FEROX_API_SECRET` is set (Railway sets `PORT` automatically)
 
-**If the app crashes when you visit the URL in a browser:**
+**If you see "unable to open database file" in logs:**
 
-Add a **Railway Volume** for persistent storage (the default in-memory DB can be unstable):
+The app now falls back to in-memory DB when the volume path fails, so it should start. For persistent storage:
 
-1. In Railway → your service → **Variables** tab
-2. Click **+ New Variable** → **Add Volume**
-3. Create a volume with mount path: **`/data`**
-4. Redeploy — the app auto-detects the volume and uses it for the database
+1. In Railway → your service → **Variables** tab, remove `FEROX_DATABASE_URL` if set (let the app use defaults)
+2. Add a **Volume** (Variables → Add Volume) with mount path **`/data`**
+3. Set `FEROX_DATABASE_URL=sqlite+aiosqlite:////data/ferox.db` in Variables
+4. Redeploy
 
 ### Option B: Render
 
@@ -61,7 +61,7 @@ Add a **Railway Volume** for persistent storage (the default in-memory DB can be
 
 ### Step 1: Get an LNbits wallet
 
-1. Go to **https://legend.lnbits.com**
+1. Go to **https://legend.lnbi
 2. Click **“Create wallet”**
 3. Save the **Admin key** and **Invoice/Payment key** somewhere safe
 4. You’ll use the **Invoice/Payment key** as `FEROX_LNBITS_API_KEY`
@@ -97,6 +97,17 @@ cd /home/mauricio/agents/playground/ferox-micropayments
 1. Write 2–3 sentences: what Ferox does, who it’s for
 2. Post on Twitter/X, Reddit (r/lightningnetwork, r/SideProject), or Hacker News (Show HN)
 3. Add a simple contact or pricing page if you want
+
+---
+
+## Documentation
+
+| Document | Description |
+|----------|-------------|
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Technical architecture |
+| [docs/BUSINESS_OVERVIEW.md](docs/BUSINESS_OVERVIEW.md) | Business perspective |
+| [docs/ROI_ANALYSIS.md](docs/ROI_ANALYSIS.md) | Return on investment |
+| [docs/FAQ_BUSINESS.md](docs/FAQ_BUSINESS.md) | Business Q&A (money, costs, marketing, trust) |
 
 ---
 

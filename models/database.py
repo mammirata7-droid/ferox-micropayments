@@ -1,4 +1,5 @@
 """Database models and setup."""
+import os
 from datetime import datetime
 from sqlalchemy import Column, Integer, String, DateTime, Text, JSON
 from sqlalchemy.orm import declarative_base
@@ -6,6 +7,8 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sess
 from sqlalchemy.pool import StaticPool
 
 Base = declarative_base()
+
+IN_MEMORY_URL = "sqlite+aiosqlite:///file::memory:?cache=shared"
 
 
 class Payment(Base):
@@ -47,7 +50,19 @@ class UsageLog(Base):
 
 
 async def init_db(database_url: str):
-    """Create tables."""
+    """Create tables. Ensures parent dir exists for file-based SQLite."""
+    # Ensure parent directory exists for file-based DB (e.g. /data/ferox.db -> /data)
+    if database_url.startswith("sqlite") and ":memory:" not in database_url and "memory" not in database_url:
+        try:
+            # Extract path from sqlite+aiosqlite:///path or sqlite+aiosqlite:////abs/path
+            parts = database_url.split("///", 1)
+            if len(parts) == 2:
+                path = parts[1].split("?")[0]  # strip query params
+                parent = os.path.dirname(path)
+                if parent:
+                    os.makedirs(parent, exist_ok=True)
+        except Exception:
+            pass  # ignore; SQLite will raise if it can't create
     # StaticPool for in-memory SQLite - keeps single connection, avoids DB destruction on request end
     poolclass = StaticPool if ":memory:" in database_url or "memory" in database_url else None
     pool_kw = {"poolclass": poolclass} if poolclass else {}

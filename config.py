@@ -5,10 +5,13 @@ from functools import lru_cache
 
 
 def _default_database_url() -> str:
-    """Use Railway volume if mounted, else in-memory."""
-    mount = os.environ.get("RAILWAY_VOLUME_MOUNT_PATH")
+    """Use Railway volume if mounted, else in-memory.
+    If volume path fails at startup, main.py falls back to in-memory.
+    """
+    mount = os.environ.get("RAILWAY_VOLUME_MOUNT_PATH", "").strip()
     if mount:
-        return f"sqlite+aiosqlite:///{mount.rstrip('/')}/ferox.db"
+        path = mount.rstrip("/") + "/ferox.db"
+        return f"sqlite+aiosqlite:///{path}"
     return "sqlite+aiosqlite:///file::memory:?cache=shared"
 
 

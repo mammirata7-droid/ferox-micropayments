@@ -17,17 +17,28 @@ log = logging.getLogger(__name__)
 async def lifespan(app: FastAPI):
     """Startup: init DB. Shutdown: cleanup."""
     import deps
+    from models.database import IN_MEMORY_URL
+
     log.info("Starting Ferox Micropayments (PORT=%s)", os.environ.get("PORT", "8000"))
+    settings = get_settings()
+    db_url = settings.database_url
+    engine = None
     try:
-        settings = get_settings()
-        engine = await init_db(settings.database_url)
+        engine = await init_db(db_url)
         deps.SessionLocal = get_session_factory(engine)
         log.info("Database initialized")
     except Exception as e:
-        log.exception("Startup failed: %s", e)
-        raise
+        if "unable to open database file" in str(e) and db_url != IN_MEMORY_URL:
+            log.warning("Volume path failed (%s), falling back to in-memory DB", e)
+            engine = await init_db(IN_MEMORY_URL)
+            deps.SessionLocal = get_session_factory(engine)
+            log.info("Database initialized (in-memory fallback)")
+        else:
+            log.exception("Startup failed: %s", e)
+            raise
     yield
-    await engine.dispose()
+    if engine:
+        await engine.dispose()
 
 
 app = FastAPI(
